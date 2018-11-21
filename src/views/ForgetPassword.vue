@@ -1,8 +1,8 @@
 <template>
-    <div class="register">
-        <Card title="注册页面" :bordered="false" icon="ios-contact" class="register-card">
+    <div class="forgetPassword">
+        <Card title="重置密码" :bordered="false" icon="ios-contact" class="forgetPassword-card">
             <div class="form-con">
-                <Form ref="registerForm" :model="form" :rules="rules" @keydown.enter.native="handleRegister">
+                <Form ref="forgetPasswordForm" :model="form" :rules="rules" @keydown.enter.native="handleforgetPassword">
                     <FormItem prop="userName">
                         <Input v-model="form.userName" placeholder="请输入用户名">
                         <span slot="prepend">
@@ -24,7 +24,7 @@
                         </span>
                         </Input>
                     </FormItem>
-                    <Button @click.native.prevent="handleRegister" type="primary" long class="submitBtn" :loading="loading">立即注册</Button>
+                    <Button @click.native.prevent="handleforgetPassword" type="primary" long class="submitBtn" :loading="loading">重置密码</Button>
                     <Button @click.native.prevent="handleBackLogin" type="info" long class="">返回登录</Button>
                 </Form>
             </div>
@@ -38,22 +38,6 @@ import { checkUserName, checkPassword } from "@/common/checkRules";
 
 export default {
     data() {
-        // 验证密码一致
-        const checkRePassword = (rule, value, callback) => {
-            if (value === "" || value.trim() === "") {
-                callback(new Error("请输入密码"));
-            } else {
-                if (value.length < 6) {
-                    callback(new Error("密码不能小于6位"));
-                } else if (value.length > 16) {
-                    callback(new Error("密码不能大于16位"));
-                } else if (value !== this.form.password) {
-                    callback(new Error("两次密码不一致"));
-                } else {
-                    callback();
-                }
-            }
-        };
         return {
             loading: false,
             form: {
@@ -64,25 +48,25 @@ export default {
             rules: {
                 userName: [{ validator: checkUserName, trigger: "blur" }],
                 password: [{ validator: checkPassword, trigger: "blur" }],
-                rePassword: [{ validator: checkRePassword, trigger: "blur" }]
+                rePassword: [{ validator: checkPassword, trigger: "blur" }]
             }
         };
     },
     methods: {
-        handleRegister() {
-            this.$refs.registerForm.validate(valid => {
+        handleforgetPassword() {
+            this.$refs.forgetPasswordForm.validate(valid => {
                 if (valid) {
                     this.loading = true;
                     axios
-                        .post("http://localhost:3000/register", this.form)
+                        .post("http://localhost:3000/forgetPassword", this.form)
                         .then(res => {
                             this.loading = false;
                             if (res.data === "success") {
-                                this.$Message.success("注册成功,请前往登录页面");
-                            } else if (res.data === "exist") {
-                                this.$Message.error("账户已存在，请直接登录");
+                                this.$Message.success("修改成功,请前往登录");
+                            } else if (res.data === "none") {
+                                this.$Message.error("用户名不存在!");
                             } else {
-                                this.$Message.error("注册失败!");
+                                this.$Message.error("修改失败!");
                             }
                         })
                         .catch(error => {
@@ -100,7 +84,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.register {
+.forgetPassword {
     height: 100%;
     width: 100%;
     position: absolute;

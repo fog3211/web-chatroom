@@ -2,7 +2,7 @@
     <div class="login">
         <Card title="欢迎登录" :bordered="false" icon="ios-contact" class="login-card">
             <div class="form-con">
-                <Form ref="loginForm" :model="form" :rules="rules" @keydown.enter.native="handleSubmit">
+                <Form ref="loginForm" :model="form" :rules="rules" @keydown.enter.native="handleLogin">
                     <FormItem prop="userName">
                         <Input v-model="form.userName" placeholder="请输入用户名">
                         <span slot="prepend">
@@ -17,9 +17,10 @@
                         </span>
                         </Input>
                     </FormItem>
-                    <FormItem>
-                        <Button @click.native.prevent="handleRegister" type="info" long class="submitBtn">注册</Button>
-                        <Button @click.native.prevent="handleLogin" type="primary" long class="">登录</Button>
+                    <FormItem class="btnGroop">
+                        <Button @click.native.prevent="handleRegister" type="info" class="submitBtn">注册</Button>
+                        <Button @click.native.prevent="handleLogin" type="primary" class="submitBtn" :loading="loading">登录</Button>
+                        <Button @click.native.prevent="handleForgetPassword" type="warning" class="submitBtn">忘记密码</Button>
                     </FormItem>
                 </Form>
             </div>
@@ -38,7 +39,7 @@ export default {
                 userName: "admin",
                 password: "123456"
             },
-            logining: false,
+            loading: false,
             rules: {
                 userName: [{ validator: checkUserName, trigger: "blur" }],
                 password: [{ validator: checkPassword, trigger: "blur" }]
@@ -49,25 +50,34 @@ export default {
         handleRegister() {
             this.$router.push("/register");
         },
+        handleForgetPassword() {
+            this.$router.push("/forgetpwd");
+        },
         handleLogin() {
             this.$refs.loginForm.validate(valid => {
                 if (valid) {
+                    this.loading = true;
                     axios
                         .post("http://localhost:3000/login", this.form)
                         .then(res => {
+                            this.loading = false;
+                            // console.log(res.data);
                             if (res.data === "success") {
                                 this.$Message.success("登录成功");
+                            } else if (res.data === "none") {
+                                this.$Message.error("用户不存在!");
                             } else {
-                                this.$Message.error("登录失败!");
+                                this.$Message.error("密码错误!");
                             }
                         })
                         .catch(error => {
+                            this.loading = false;
                             console.log(error);
                         });
                 }
             });
         }
-    },
+    }
 };
 </script>
 
@@ -93,8 +103,12 @@ export default {
         }
         .form-con {
             padding-top: 10px;
-            .submitBtn {
-                margin-bottom: 10px;
+            .btnGroop {
+                margin: 0 auto;
+                .submitBtn {
+                    width: 75px;
+                    margin: 0 5px;
+                }
             }
         }
     }
