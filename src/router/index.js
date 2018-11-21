@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import Login from '@/views/Login'
 import Register from '@/views/Register'
 import ForgetPwd from '@/views/ForgetPassword'
-import identify from '_c/identify'
+import Identify from '_c/Identify'
 
 Vue.use(Router)
 
@@ -25,5 +25,10 @@ export default new Router({
     path: '/forgetpwd',
     name: 'ForgetPwd',
     component: ForgetPwd
+  }, {
+    path: '/identify',
+    name: 'Identify',
+    component: Identify
   }]
+  
 })

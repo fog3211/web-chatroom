@@ -11,11 +11,6 @@ const checkPassword = (rule, value, callback) => {
   if (value === "" || value.trim() === "") {
     callback(new Error("请输入密码"));
   } else {
-    if (value.length < 6) {
-      callback(new Error("密码不能小于6位"));
-    } else if (value.length > 16) {
-      callback(new Error("密码不能大于16位"));
-    }
     callback();
   }
 };
@@ -25,11 +20,7 @@ const checkPassword = (rule, value, callback) => {
 //   if (value === "" || value.trim() === "") {
 //     callback(new Error("请输入密码"));
 //   } else {
-//     if (value.length < 6) {
-//       callback(new Error("密码不能小于6位"));
-//     } else if (value.length > 16) {
-//       callback(new Error("密码不能大于16位"));
-//     } else if (value !== this.form.password) {
+//     if (value !== this.form.password) {
 //       callback(new Error("两次密码不一致"));
 //     } else {
 //       callback();
@@ -37,7 +28,22 @@ const checkPassword = (rule, value, callback) => {
 //   }
 // };
 
+// 最小长度限制
+const minRule = {
+  min: 6,
+  message: "密码长度最少为6位",
+  trigger: "blur"
+};
+
+// 最大长度限制
+const maxRule = {
+  max: 16,
+  message: "密码长度最多为16位",
+  trigger: "blur"
+};
 export {
   checkUserName,
-  checkPassword
+  checkPassword,
+  minRule,
+  maxRule
 }

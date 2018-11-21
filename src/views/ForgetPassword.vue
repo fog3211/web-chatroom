@@ -34,7 +34,12 @@
 
 <script>
 import axios from "axios";
-import { checkUserName, checkPassword } from "@/common/checkRules";
+import {
+    checkUserName,
+    checkPassword,
+    minRule,
+    maxRule
+} from "@/common/checkRules";
 
 export default {
     data() {
@@ -47,8 +52,16 @@ export default {
             },
             rules: {
                 userName: [{ validator: checkUserName, trigger: "blur" }],
-                password: [{ validator: checkPassword, trigger: "blur" }],
-                rePassword: [{ validator: checkPassword, trigger: "blur" }]
+                password: [
+                    minRule,
+                    maxRule,
+                    { validator: checkPassword, trigger: "blur" }
+                ],
+                rePassword: [
+                    minRule,
+                    maxRule,
+                    { validator: checkPassword, trigger: "blur" }
+                ]
             }
         };
     },
