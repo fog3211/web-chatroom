@@ -4,28 +4,28 @@
             <div class="form-con">
                 <Form ref="registerForm" :model="form" :rules="rules" @keydown.enter.native="handleRegister">
                     <FormItem prop="userName">
-                        <Input v-model="form.userName" placeholder="请输入用户名">
+                        <Input v-model="form.userName" placeholder="请输入用户名" size="large">
                         <span slot="prepend">
-                            <Icon :size="16" type="ios-person"></Icon>
+                            <Icon :size="20" type="ios-person"></Icon>
                         </span>
                         </Input>
                     </FormItem>
                     <FormItem prop="password">
-                        <Input type="password" v-model="form.password" placeholder="请输入密码">
+                        <Input type="password" v-model="form.password" placeholder="请输入密码" size="large">
                         <span slot="prepend">
-                            <Icon :size="16" type="md-lock"></Icon>
+                            <Icon :size="20" type="md-lock"></Icon>
                         </span>
                         </Input>
                     </FormItem>
                     <FormItem prop="rePassword">
-                        <Input type="password" v-model="form.rePassword" placeholder="请再次输入密码">
+                        <Input type="password" v-model="form.rePassword" placeholder="请再次输入密码" size="large">
                         <span slot="prepend">
-                            <Icon :size="16" type="md-lock"></Icon>
+                            <Icon :size="20" type="md-lock"></Icon>
                         </span>
                         </Input>
                     </FormItem>
                     <FormItem prop="identify" class="identify">
-                        <Input v-model="form.rePassword" placeholder="请输入验证码" class="identifyInput"></Input>
+                        <Input v-model="form.identify" placeholder="请输入验证码" class="identifyInput" size="large"></Input>
                         <Identify :identifyCode="identifyCode" @click.native.prevent="refreshIdentify" class="identifyArea"></Identify>
                     </FormItem>
                     <Button @click.native.prevent="handleRegister" type="primary" long class="submitBtn" :loading="loading">立即注册</Button>
@@ -44,7 +44,9 @@ import {
     minRule,
     maxRule
 } from "@/common/checkRules";
+import util from "@/common/utils";
 import Identify from "_c/Identify";
+
 export default {
     components: {
         Identify
@@ -62,7 +64,16 @@ export default {
                 }
             }
         };
-        const checkidentify = null;
+        // 校验验证码
+        const checkIdentify = (rule, value, callback) => {
+            if (value === "" || value.trim() === "") {
+                callback(new Error("请输入验证码"));
+            } else if (value === this.identifyCode) {
+                callback();
+            } else {
+                callback(new Error("验证码错误"));
+            }
+        };
         return {
             loading: false,
             form: {
@@ -85,7 +96,7 @@ export default {
                     maxRule,
                     { validator: checkRePassword, trigger: "blur" }
                 ],
-                identify: [{ validator: checkidentify, trigger: "blur" }]
+                identify: [{ validator: checkIdentify, trigger: "blur" }]
             }
         };
     },
@@ -118,25 +129,13 @@ export default {
         handleBackLogin() {
             this.$router.push("/login");
         },
-        randomNum(min, max) {
-            return Math.floor(Math.random() * (max - min) + min);
-        },
-        makeCode(o, l) {
-            for (let i = 0; i < l; i++) {
-                this.identifyCode += this.identifyCodes[
-                    this.randomNum(0, this.identifyCodes.length)
-                ];
-            }
-            // console.log(this.identifyCode);
-        },
         refreshIdentify() {
-            this.identifyCode = "";
-            this.makeCode(this.identifyCodes, 4);
+            this.form.identify = "";
+            this.identifyCode = util.makeCode(this.identifyCodes, 4);
         }
     },
     mounted() {
-        this.identifyCode = "";
-        this.makeCode(this.identifyCodes, 4);
+        this.identifyCode = util.makeCode(this.identifyCodes, 4);
     }
 };
 </script>
@@ -166,14 +165,15 @@ export default {
                 margin-bottom: 10px;
             }
             .identify {
-                height: 32px;
-                .identifyArea {
-                    float: right;
-                    height: 32px;
-                }
                 .identifyInput {
-                    float: left;
-                    width: 148px;
+                    vertical-align: top;
+                    display: inline-block;
+                    width: 200px;
+                }
+                .identifyArea {
+                    display: inline-block;
+                    height: 36px;
+                    padding-left: 10px;
                 }
             }
         }

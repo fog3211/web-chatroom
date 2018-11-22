@@ -1,19 +1,19 @@
 <template>
-    <div class="login">
+    <div class="login" id="login">
         <Card title="欢迎登录" :bordered="false" icon="ios-contact" class="login-card">
             <div class="form-con">
                 <Form ref="loginForm" :model="form" :rules="rules" @keydown.enter.native="handleLogin">
-                    <FormItem prop="userName">
-                        <Input v-model="form.userName" placeholder="请输入用户名">
+                    <FormItem prop="userName" class="form-item">
+                        <Input v-model="form.userName" placeholder="请输入用户名" size="large">
                         <span slot="prepend">
-                            <Icon :size="16" type="ios-person"></Icon>
+                            <Icon size="20" type="ios-person"></Icon>
                         </span>
                         </Input>
                     </FormItem>
-                    <FormItem prop="password">
-                        <Input type="password" v-model="form.password" placeholder="请输入密码">
+                    <FormItem prop="password" class="form-item">
+                        <Input type="password" v-model="form.password" placeholder="请输入密码" size="large">
                         <span slot="prepend">
-                            <Icon :size="16" type="md-lock"></Icon>
+                            <Icon size="20" type="md-lock"></Icon>
                         </span>
                         </Input>
                     </FormItem>
@@ -103,21 +103,19 @@ export default {
         position: absolute;
         right: 160px;
         top: 30%;
-        width: 300px;
-        &-header {
-            font-size: 16px;
-            font-weight: 300;
-            text-align: center;
-            padding: 30px 0;
-        }
+        width: 360px;
         .form-con {
-            padding-top: 10px;
+            padding-top: 15px;
             .btnGroop {
                 margin: 0 auto;
                 .submitBtn {
                     width: 75px;
-                    margin: 0 5px;
+                    margin: 0 13px;
                 }
+            }
+            .form-item {
+                padding-top: 5px;
+                padding-bottom: 10px;
             }
         }
     }

@@ -41,9 +41,10 @@ const maxRule = {
   message: "密码长度最多为16位",
   trigger: "blur"
 };
+
 export {
   checkUserName,
   checkPassword,
   minRule,
-  maxRule
+  maxRule,
 }

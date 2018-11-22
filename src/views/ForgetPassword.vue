@@ -6,26 +6,30 @@
                     <FormItem prop="userName">
                         <Input v-model="form.userName" placeholder="请输入用户名">
                         <span slot="prepend">
-                            <Icon :size="16" type="ios-person"></Icon>
+                            <Icon :size="20" type="ios-person"></Icon>
                         </span>
                         </Input>
                     </FormItem>
                     <FormItem prop="password">
-                        <Input type="password" v-model="form.password" placeholder="请输入密码">
+                        <Input type="password" v-model="form.password" placeholder="请输入密码" size="large">
                         <span slot="prepend">
-                            <Icon :size="16" type="md-lock"></Icon>
+                            <Icon :size="20" type="md-lock"></Icon>
                         </span>
                         </Input>
                     </FormItem>
                     <FormItem prop="rePassword">
-                        <Input type="password" v-model="form.rePassword" placeholder="请再次输入密码">
+                        <Input type="password" v-model="form.rePassword" placeholder="请再次输入密码" size="large">
                         <span slot="prepend">
-                            <Icon :size="16" type="md-lock"></Icon>
+                            <Icon :size="20" type="md-lock"></Icon>
                         </span>
                         </Input>
                     </FormItem>
-                    <Button @click.native.prevent="handleforgetPassword" type="primary" long class="submitBtn" :loading="loading">重置密码</Button>
-                    <Button @click.native.prevent="handleBackLogin" type="info" long class="">返回登录</Button>
+                    <FormItem prop="identify" class="identify">
+                        <Input v-model="form.identify" placeholder="请输入验证码" class="identifyInput" size="large"></Input>
+                        <Identify :identifyCode="identifyCode" @click.native.prevent="refreshIdentify" class="identifyArea"></Identify>
+                    </FormItem>
+                    <Button @click.native.prevent="handleforgetPassword" type="warning" long class="submitBtn" :loading="loading">重置密码</Button>
+                    <Button @click.native.prevent="handleBackLogin" type="primary" long class="">返回登录</Button>
                 </Form>
             </div>
         </Card>
@@ -40,16 +44,46 @@ import {
     minRule,
     maxRule
 } from "@/common/checkRules";
+import util from "@/common/utils";
+import Identify from "_c/Identify";
 
 export default {
+    components: {
+        Identify
+    },
     data() {
+        // 验证密码一致
+        const checkRePassword = (rule, value, callback) => {
+            if (value === "" || value.trim() === "") {
+                callback(new Error("请输入密码"));
+            } else {
+                if (value !== this.form.password) {
+                    callback(new Error("两次密码不一致"));
+                } else {
+                    callback();
+                }
+            }
+        };
+        // 校验验证码
+        const checkIdentify = (rule, value, callback) => {
+            if (value === "" || value.trim() === "") {
+                callback(new Error("请输入验证码"));
+            } else if (value === this.identifyCode) {
+                callback();
+            } else {
+                callback(new Error("验证码错误"));
+            }
+        };
         return {
             loading: false,
             form: {
                 userName: "",
                 password: "",
-                rePassword: ""
+                rePassword: "",
+                identify: ""
             },
+            identifyCodes: "1234567890",
+            identifyCode: "",
             rules: {
                 userName: [{ validator: checkUserName, trigger: "blur" }],
                 password: [
@@ -60,8 +94,9 @@ export default {
                 rePassword: [
                     minRule,
                     maxRule,
-                    { validator: checkPassword, trigger: "blur" }
-                ]
+                    { validator: checkRePassword, trigger: "blur" }
+                ],
+                identify: [{ validator: checkIdentify, trigger: "blur" }]
             }
         };
     },
@@ -91,7 +126,14 @@ export default {
         },
         handleBackLogin() {
             this.$router.push("/login");
+        },
+        refreshIdentify() {
+            this.form.identify = "";
+            this.identifyCode = util.makeCode(this.identifyCodes, 4);
         }
+    },
+    mounted() {
+       this.identifyCode = util.makeCode(this.identifyCodes, 4);
     }
 };
 </script>
@@ -108,7 +150,7 @@ export default {
         position: absolute;
         right: 160px;
         top: 30%;
-        width: 300px;
+        width: 360px;
         &-header {
             font-size: 16px;
             font-weight: 300;
@@ -119,6 +161,18 @@ export default {
             padding-top: 10px;
             .submitBtn {
                 margin-bottom: 10px;
+            }
+            .identify {
+                .identifyInput {
+                    vertical-align: top;
+                    display: inline-block;
+                    width: 200px;
+                }
+                .identifyArea {
+                    display: inline-block;
+                    height: 36px;
+                    padding-left: 10px;
+                }
             }
         }
     }

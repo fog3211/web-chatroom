@@ -57,14 +57,8 @@ export default {
         },
         contentHeight: {
             type: Number,
-            default: 30
+            default: 36
         }
-        // data() {
-        //     return {
-        //       contentWidth:112,
-        //       contentHeight:38
-        //     }
-        // },
     },
     methods: {
         // 生成一个随机数
@@ -113,7 +107,7 @@ export default {
         },
         drawDot(ctx) {
             // 绘制干扰点
-            for (let i = 0; i < 100; i++) {
+            for (let i = 0; i < 50; i++) {
                 ctx.fillStyle = this.randomColor(0, 255);
                 ctx.beginPath();
                 ctx.arc(
