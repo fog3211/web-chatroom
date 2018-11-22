@@ -106,7 +106,7 @@ export default {
                 if (valid) {
                     this.loading = true;
                     axios
-                        .post("http://localhost:3000/forgetPassword", this.form)
+                        .post("http://localhost:3000/forgetpassword", this.form)
                         .then(res => {
                             this.loading = false;
                             if (res.data === "success") {

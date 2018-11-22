@@ -11,10 +11,10 @@ export default {
             type: String,
             default: "1234"
         },
-        fontSizeMin: {
-            type: Number,
-            default: 16
-        },
+        // fontSizeMin: {
+        //     type: Number,
+        //     default: 16
+        // },
         fontSizeMax: {
             type: Number,
             default: 40
@@ -58,6 +58,11 @@ export default {
         contentHeight: {
             type: Number,
             default: 36
+        }
+    },
+    data() {
+        return {
+            fontSizeMin:16
         }
     },
     methods: {

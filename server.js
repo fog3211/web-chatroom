@@ -79,18 +79,20 @@ app.post('/register', (req, res) => {
 })
 
 // 修改密码
-app.post('/forgetPassword', (req, res) => {
+app.post('/forgetpassword', (req, res) => {
   setTimeout(() => {
     let _req = req.body;
-    logindata.some(u => {
+    let hasUser = false;
+
+    hasUser = logindata.some(u => {
       if (u.userName === _req.userName) {
+        u.password = _req.password;
+        res.send('success');
         return true;
       }
     })
 
-    if (hasUser) {
-      res.send('success');
-    } else {
+    if (!hasUser) {
       res.send('none');
     }
   }, 1000);
