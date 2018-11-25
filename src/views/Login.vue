@@ -17,6 +17,7 @@
                         </span>
                         </Input>
                     </FormItem>
+                    <p class="login-tip">账号：admin，密码：123456</p>
                     <FormItem class="btnGroop">
                         <Button @click.native.prevent="handleRegister" type="info" class="submitBtn">注册</Button>
                         <Button @click.native.prevent="handleLogin" type="primary" class="submitBtn" :loading="loading">登录</Button>
@@ -41,8 +42,8 @@ export default {
     data() {
         return {
             form: {
-                userName: "admin",
-                password: "123456"
+                userName: "",
+                password: ""
             },
             loading: false,
             rules: {
@@ -72,6 +73,10 @@ export default {
                             this.loading = false;
                             // console.log(res.data);
                             if (res.data === "success") {
+                                sessionStorage.setItem(
+                                    "user",
+                                    this.form.userName
+                                );
                                 this.$Message.success("登录成功");
                             } else if (res.data === "none") {
                                 this.$Message.error("用户不存在!");
@@ -81,7 +86,7 @@ export default {
                         })
                         .catch(error => {
                             this.loading = false;
-                            console.log(error);
+                            // console.log(error);
                         });
                 }
             });
@@ -116,6 +121,13 @@ export default {
             .form-item {
                 padding-top: 5px;
                 padding-bottom: 10px;
+            }
+            .login-tip {
+                font-size: 12px;
+                text-align: center;
+                color: #808080;
+                padding-bottom: 15px;
+                letter-spacing: 2px;
             }
         }
     }

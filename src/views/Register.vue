@@ -109,10 +109,10 @@ export default {
                         .post("http://localhost:3000/register", this.form)
                         .then(res => {
                             this.loading = false;
+                            this.refreshIdentify();
                             if (res.data === "success") {
-                                this.$Message.success(
-                                    "注册成功,请前往登录页面"
-                                );
+                                this.$Message.success("注册成功,请登录");
+                                this.$router.push("/login");
                             } else if (res.data === "exist") {
                                 this.$Message.error("账户已存在，请直接登录");
                             } else {
@@ -121,7 +121,7 @@ export default {
                         })
                         .catch(error => {
                             this.loading = false;
-                            console.log(error);
+                            // console.log(error);
                         });
                 }
             });

@@ -109,8 +109,10 @@ export default {
                         .post("http://localhost:3000/forgetpassword", this.form)
                         .then(res => {
                             this.loading = false;
+                            this.refreshIdentify();
                             if (res.data === "success") {
-                                this.$Message.success("修改成功,请前往登录");
+                                this.$Message.success("修改成功,请登录");
+                                this.$router.push("/login");
                             } else if (res.data === "none") {
                                 this.$Message.error("用户名不存在!");
                             } else {
@@ -133,7 +135,7 @@ export default {
         }
     },
     mounted() {
-       this.identifyCode = util.makeCode(this.identifyCodes, 4);
+        this.identifyCode = util.makeCode(this.identifyCodes, 4);
     }
 };
 </script>

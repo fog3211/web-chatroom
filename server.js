@@ -1,7 +1,9 @@
-var express = require('express');
-var bodyParser = require('body-parser');
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+const MongoClient = require('mongodb').MongoClient;
+const url = "mongodb://localhost:27017/";
 
-var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
@@ -9,20 +11,13 @@ app.use(bodyParser.urlencoded({
 
 // 解决跨域问题
 app.all('*', function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://localhost:8080");
+  res.header("Access-Control-Allow-Origin", "http://localhost:8081");
   res.header('Access-Control-Allow-Headers', 'Content-type');
   res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS,PATCH");
   res.header('Access-Control-Max-Age', 1728000); //预请求缓存20天
   next();
 });
 
-var logindata = [{
-  userName: 'admin',
-  password: '123456'
-}, {
-  userName: 'root',
-  password: '123123'
-}]
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
@@ -30,72 +25,96 @@ app.get('/', (req, res) => {
 
 // 登录
 app.post('/login', (req, res) => {
-  setTimeout(() => {
-    let _req = req.body;
-    let _user = null;
-    let hasUser = false;
+  var _req = req.body;
 
-    hasUser = logindata.some(u => {
-      if (u.userName === _req.userName) {
-        _user = u;
-        return true;
-      }
-    })
-    if (hasUser) {
-      if (_user.password === _req.password) {
-        res.send('success');
+  MongoClient.connect(url, function (err, db) {
+    if (err) throw err;
+    let dbo = db.db("chatroom");
+    dbo.collection("loginData").find({
+      "userName": _req.userName,
+    }).toArray(function (err, result) {
+      if (err) throw err;
+      if (result.length > 0) {
+        dbo.collection("loginData").find({
+          "userName": _req.userName,
+          "password": _req.password,
+        }).toArray(function (err, result) {
+          if (err) throw err;
+          if (result.length > 0) {
+            res.send('success');
+          } else {
+            res.send('fail');
+          }
+          db.close();
+        });
       } else {
-        res.send('fail');
+        res.send('none');
       }
-    } else {
-      res.send('none');
-    }
-  }, 1000);
-
+      db.close();
+    });
+  });
 })
 
 // 注册
 app.post('/register', (req, res) => {
-  setTimeout(() => {
-    let _req = req.body;
-    let hasUser = false;
+  let _req = req.body;
 
-    hasUser = logindata.some(u => {
-      if (u.userName === _req.userName) {
-        return true;
+  MongoClient.connect(url, function (err, db) {
+    if (err) throw err;
+    var dbo = db.db("chatroom");
+    dbo.collection("loginData").find({
+      "userName": _req.userName
+    }).toArray(function (err, result) {
+      if (err) throw err;
+      if (result.length > 0) {
+        res.send('exist');
+      } else {
+        var loginObj = {
+          "userName": _req.userName,
+          "password": _req.password
+        }
+        dbo.collection("loginData").insertOne(loginObj, function (err, result) {
+          if (err) throw err;
+          res.send('success');
+          db.close();
+        });
       }
-    })
-
-    if (hasUser) {
-      res.send('exist');
-    } else {
-      logindata.push({
-        userName: _req.userName,
-        password: _req.password
-      });
-      res.send('success');
-    }
-  }, 1000);
+      db.close();
+    });
+  });
 })
 
 // 修改密码
 app.post('/forgetpassword', (req, res) => {
-  setTimeout(() => {
-    let _req = req.body;
-    let hasUser = false;
+  let _req = req.body;
 
-    hasUser = logindata.some(u => {
-      if (u.userName === _req.userName) {
-        u.password = _req.password;
-        res.send('success');
-        return true;
+  MongoClient.connect(url, function (err, db) {
+    if (err) throw err;
+    var dbo = db.db("chatroom");
+    dbo.collection("loginData").find({
+      "userName": _req.userName
+    }).toArray(function (err, result) {
+      if (err) throw err;
+      if (result.length > 0) {
+        var whereObj = {
+          "userName": _req.userName
+        }
+        var updateObj = {
+          $set: {
+            "password": _req.password
+          }
+        };
+        dbo.collection("loginData").updateOne(whereObj, updateObj, function (err, result) {
+          if (err) throw err;
+          res.send("success");
+          db.close();
+        });
+      } else {
+        res.send('none');
       }
-    })
-
-    if (!hasUser) {
-      res.send('none');
-    }
-  }, 1000);
+      db.close();
+    });
+  });
 })
 
 app.listen(3000, function () {
