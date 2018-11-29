@@ -1,21 +1,24 @@
 # vue-project
 
-> A Vue.js project
+> 以vue+vue-router+iview+express+MongoDB构建的在线聊天系统(登录注册功能)
 
 ## Build Setup
 
 ``` bash
-# install dependencies
-npm install
+# 安装依赖
+npm install  
 
-# serve with hot reload at localhost:8080
+# 开启数据库服务
+mongod  
+
+# 启动服务端
+npm run server  
+
+# 项目运行
 npm run dev
 
-# build for production with minification
+# 项目打包
 npm run build
 
-# build for production and view the bundle analyzer report
-npm run build --report
 ```
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).

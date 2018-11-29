@@ -17,7 +17,7 @@
                         </span>
                         </Input>
                     </FormItem>
-                    <p class="login-tip">账号：admin，密码：123456</p>
+                    <p class="login-tip" >账号：admin，密码：123456</p>
                     <FormItem class="btnGroop">
                         <Button @click.native.prevent="handleRegister" type="info" class="submitBtn">注册</Button>
                         <Button @click.native.prevent="handleLogin" type="primary" class="submitBtn" :loading="loading">登录</Button>
@@ -42,8 +42,8 @@ export default {
     data() {
         return {
             form: {
-                userName: "",
-                password: ""
+                userName: "root",
+                password: "123456"
             },
             loading: false,
             rules: {
@@ -78,6 +78,7 @@ export default {
                                     this.form.userName
                                 );
                                 this.$Message.success("登录成功");
+                                this.$router.push({path:"/chat"});
                             } else if (res.data === "none") {
                                 this.$Message.error("用户不存在!");
                             } else {

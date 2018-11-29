@@ -10,25 +10,28 @@ import 'iview/dist/styles/iview.css';
 Vue.config.productionTip = false
 Vue.use(iView);
 
-// router.beforeEach((to, from, next) => {
-//   if (to.path == '/login') {
-//     sessionStorage.removeItem('user');
-//   }
-//   let user = JSON.parse(sessionStorage.getItem('user'));
-//   if (!user && to.path != '/login') {
-//     next({
-//       path: '/login'
-//     })
-//   } else {
-//     next()
-//   }
-// })
+// 路由守卫
+router.beforeEach((to, from, next) => {
+  if (to.path == '/login') {
+    sessionStorage.removeItem('user');
+  }
+  let user = sessionStorage.getItem('user');
+  if (!user && to.path == '/chat') {
+    next({
+      path: '/login'
+    })
+  } else {
+    next()
+  }
+})
 
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
-  components: { App },
+  components: {
+    App
+  },
   template: '<App/>'
 })

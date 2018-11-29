@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import Login from '@/views/Login'
 import Register from '@/views/Register'
 import ForgetPwd from '@/views/ForgetPassword'
-import Identify from '_c/Identify'
+import Chat from '@/views/Chat'
 
 Vue.use(Router)
 
@@ -26,9 +26,8 @@ export default new Router({
     name: 'ForgetPwd',
     component: ForgetPwd
   }, {
-    path: '/identify',
-    name: 'Identify',
-    component: Identify
+    path: '/chat',
+    name: 'Chat',
+    component: Chat
   }]
-  
 })
