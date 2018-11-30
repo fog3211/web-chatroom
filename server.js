@@ -30,9 +30,11 @@ app.get('/', (req, res) => {
 
 // 登录
 app.post('/login', (req, res) => {
-  var _req = req.body;
+  let _req = req.body;
 
-  MongoClient.connect(url, {useNewUrlParser:true},function (err, db) {
+  MongoClient.connect(url, {
+    useNewUrlParser: true
+  }, function (err, db) {
     if (err) throw err;
     let dbo = db.db("chatroom");
     dbo.collection("loginData").find({
@@ -64,9 +66,11 @@ app.post('/login', (req, res) => {
 app.post('/register', (req, res) => {
   let _req = req.body;
 
-  MongoClient.connect(url,{useNewUrlParser:true}, function (err, db) {
+  MongoClient.connect(url, {
+    useNewUrlParser: true
+  }, function (err, db) {
     if (err) throw err;
-    var dbo = db.db("chatroom");
+    let dbo = db.db("chatroom");
     dbo.collection("loginData").find({
       "userName": _req.userName
     }).toArray(function (err, result) {
@@ -74,7 +78,7 @@ app.post('/register', (req, res) => {
       if (result.length > 0) {
         res.send('exist');
       } else {
-        var loginObj = {
+        let loginObj = {
           "userName": _req.userName,
           "password": _req.password
         }
@@ -93,18 +97,20 @@ app.post('/register', (req, res) => {
 app.post('/forgetpassword', (req, res) => {
   let _req = req.body;
 
-  MongoClient.connect(url, {useNewUrlParser:true},function (err, db) {
+  MongoClient.connect(url, {
+    useNewUrlParser: true
+  }, function (err, db) {
     if (err) throw err;
-    var dbo = db.db("chatroom");
+    let dbo = db.db("chatroom");
     dbo.collection("loginData").find({
       "userName": _req.userName
     }).toArray(function (err, result) {
       if (err) throw err;
       if (result.length > 0) {
-        var whereObj = {
+        let whereObj = {
           "userName": _req.userName
         }
-        var updateObj = {
+        let updateObj = {
           $set: {
             "password": _req.password
           }
@@ -127,35 +133,79 @@ app.listen(LOGIN_SERVER_PORT, function () {
 });
 
 
-// 每进来一个客户端就记录一下
-var clientCount = 0;
+// 记录访客数量
+let visitorCount = 0;
+// 记录当前在线人数
+let onlineCount=0;
 
-var chatServer = ws.createServer(function (conn) {
-  console.log("New connection")
-  clientCount++;
-  conn.nickname = 'user' + clientCount;
-  let mes = {
-    type: "broadcast",
-    data: `${conn.nickname} 加入聊天室,欢迎第 ${clientCount} 位用户`
+MongoClient.connect(url, {
+  useNewUrlParser: true
+}, function (err, db) {
+  if (err) throw err;
+  let dbo = db.db("chatroom");
+  let whereStr = {
+    "name": '访客人数'
   };
-  broadcast(JSON.stringify(mes));
+  dbo.collection("visitorNumber").find(whereStr).toArray(function (err, result) {
+    if (err) throw err;
+    // console.log(result[0]);
+    visitorCount = result[0].count;
+    db.close();
+  });
+});
+
+let chatServer = ws.createServer(function (conn) {
+  // console.log("New connection")
+  visitorCount++;
+  onlineCount++;
+
+  MongoClient.connect(url, {
+    useNewUrlParser: true
+  }, function (err, db) {
+    if (err) throw err;
+    let dbo = db.db("chatroom");
+    let whereStr = {
+      "name": '访客人数'
+    };
+    let updateStr = {
+      $set: {
+        "count": visitorCount
+      }
+    };
+    dbo.collection("visitorNumber").updateOne(whereStr, updateStr, function (err, res) {
+      if (err) throw err;
+      db.close();
+    });
+  });
+
+
   conn.on("text", function (str) {
     if (!str) return;
-    var obj = JSON.parse(str);
-    console.log("Received " + obj.name);
-    console.log("Received " + obj.data);
+    let obj = JSON.parse(str);
+    if (!obj.data) {
+      // console.log(visitorCount);
+      let mes = {
+        type: "broadcast",
+        data: `${obj.name} 加入聊天室，欢迎第 ${visitorCount} 位访客，当前在线人数为${onlineCount}.`
+      };
+      conn.nickname = obj.name;
+      broadcast(JSON.stringify(mes));
+      return;
+    }
     let mes = {
       type: "message",
-      name:"obj.name",
-      data: `${obj.name}  :  ${obj.data}.`
+      data: obj.data,
+      name: obj.name
     };
     broadcast(JSON.stringify(mes));
   })
   conn.on("close", function (code, reason) {
-    console.log("Connection closed");
+    // console.log("Connection closed");
+    onlineCount--;
+
     let mes = {};
     mes.type = "broadcast";
-    mes.data = conn.nickname + ' left'
+    mes.data = `${conn.nickname} 已离开群聊.`
     broadcast(JSON.stringify(mes));
   })
   conn.on("error", function (err) {

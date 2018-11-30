@@ -42,7 +42,7 @@ export default {
     data() {
         return {
             form: {
-                userName: "root",
+                userName: "admin",
                 password: "123456"
             },
             loading: false,
