@@ -124,6 +124,9 @@ export default {
   width: 500px;
   height: 800px;
   background: #d4f3ed;
+  // overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   .news-container {
     display: flex;
     padding: 10px 20px;
@@ -131,19 +134,22 @@ export default {
     .news {
       padding: 10px;
       display: inline-block;
-      // overflow: hidden;
+      max-width: 80%;
+      min-width: 15%;
+      text-align: center;
+      word-wrap: break-word;
       &-other {
-        border-radius: 0 15px 15px 15px;
+        border-radius: 0 10px 10px 20px;
         background-color: #ffffff;
       }
       &-mine {
-        border-radius: 20px 15px 0 15px;
+        border-radius: 15px 20px 0 20px;
         background-color: #44d7cd;
       }
       &-system {
         padding: 5px;
         border-radius: 5px;
-        background-color:rgb(228, 221, 221);
+        background-color: rgb(228, 221, 221);
         font-size: 12px;
         color: dimgray;
       }
@@ -158,6 +164,19 @@ export default {
   }
   .news-container-other {
     justify-content: flex-start;
+  }
+
+  /*滚动条样式*/
+  &::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 6px;
+    background: #d4f3ed;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 5px;
+    background: rgba(104, 96, 96, 0.2);
   }
 }
 </style>
