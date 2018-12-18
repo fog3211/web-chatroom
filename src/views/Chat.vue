@@ -1,18 +1,7 @@
 <template>
   <div class="container">
     <div class="chat">
-      <Input
-        type="text"
-        v-model="say"
-        placeholder="说点什么吧"
-        @keydown.enter.native="handleSubmit"
-      >
-      </Input>
-      <Button
-        type="primary"
-        @click="handleSubmit"
-      >发送</Button>
-      <ul>
+      <ul class="showMessage">
         <li
           v-for="item in items"
           class="news-container"
@@ -26,6 +15,21 @@
           </div>
         </li>
       </ul>
+      <div class="sendMessage">
+        <Input
+          type="text"
+          v-model="say"
+          placeholder="说点什么吧"
+          @keydown.enter.native="handleSubmit"
+          class="sendMessage-input"
+        >
+        </Input>
+        <Button
+          type="primary"
+          @click="handleSubmit"
+          class="sendMessage-btn"
+        >发送</Button>
+      </div>
     </div>
   </div>
 </template>
@@ -47,8 +51,8 @@ export default {
         return false;
       }
       if (this.websocket.readyState !== 1) {
-        // this.websocket = new WebSocket("ws://localhost:3001/");
-        console.log("当前转态无法通讯");
+        this.$Message.error("连接已断开,请刷新重试!");
+        // console.log("当前转态无法通讯");
       }
       var msg = {
         name: this.userName,
@@ -123,10 +127,10 @@ export default {
 .chat {
   width: 500px;
   height: 800px;
+  background-color: coral;
+  border-radius: 15px;
+  margin: 60px auto 0;
   background: #d4f3ed;
-  // overflow: auto;
-  overflow-x: hidden;
-  overflow-y: auto;
   .news-container {
     display: flex;
     padding: 10px 20px;
@@ -145,11 +149,12 @@ export default {
       &-mine {
         border-radius: 15px 20px 0 20px;
         background-color: #44d7cd;
+        color: #ffffff;
       }
       &-system {
         padding: 5px;
         border-radius: 5px;
-        background-color: rgb(228, 221, 221);
+        background-color: rgb(236, 235, 235);
         font-size: 12px;
         color: dimgray;
       }
@@ -166,17 +171,35 @@ export default {
     justify-content: flex-start;
   }
 
-  /*滚动条样式*/
-  &::-webkit-scrollbar {
-    /*滚动条整体样式*/
-    width: 6px;
-    background: #d4f3ed;
+  .showMessage {
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 720px;
+    border-radius: 45px;
+    padding-top: 20px;
+    // background-color: brown;
+    /*滚动条样式*/
+    &::-webkit-scrollbar {
+      /*滚动条整体样式*/
+      width: 6px;
+      background: #d4f3ed;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      /*滚动条里面小方块*/
+      border-radius: 5px;
+      background: rgba(104, 96, 96, 0.2);
+    }
   }
 
-  &::-webkit-scrollbar-thumb {
-    /*滚动条里面小方块*/
-    border-radius: 5px;
-    background: rgba(104, 96, 96, 0.2);
+  .sendMessage {
+    display: flex;
+    &-input {
+      flex: 1;
+    }
+    &-btn {
+      flex: 0 0 50px;
+    }
   }
 }
 </style>

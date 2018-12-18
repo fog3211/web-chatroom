@@ -136,7 +136,10 @@ app.listen(LOGIN_SERVER_PORT, function () {
 // 记录访客数量
 let visitorCount = 0;
 // 记录当前在线人数
-let onlineCount=0;
+let onlineCount = 0;
+//记录在线的名字
+let onlineArr = [];
+
 
 MongoClient.connect(url, {
   useNewUrlParser: true
@@ -157,7 +160,7 @@ MongoClient.connect(url, {
 let chatServer = ws.createServer(function (conn) {
   // console.log("New connection")
   visitorCount++;
-  onlineCount++;
+  // onlineCount++;
 
   MongoClient.connect(url, {
     useNewUrlParser: true
@@ -184,6 +187,15 @@ let chatServer = ws.createServer(function (conn) {
     let obj = JSON.parse(str);
     if (!obj.data) {
       // console.log(visitorCount);
+      if (onlineArr.includes(obj.name)) {
+        // console.log(onlineArr);
+        onlineArr.push(obj.name);
+        conn.nickname = obj.name;
+        return;
+      } else {
+        onlineArr.push(obj.name);
+        onlineCount++;
+      }
       let mes = {
         type: "broadcast",
         data: `${obj.name} 加入聊天室，欢迎第 ${visitorCount} 位访客，当前在线人数为${onlineCount}.`
@@ -201,11 +213,22 @@ let chatServer = ws.createServer(function (conn) {
   })
   conn.on("close", function (code, reason) {
     // console.log("Connection closed");
-    onlineCount--;
 
+    for (let i = 0; i < onlineArr.length; i++) {
+      if (onlineArr[i] == conn.nickname) {
+        onlineArr[i] = null;
+        break;
+      }
+      onlineArr.splice(onlineArr.indexOf(null), 1);
+    }
+    if(onlineArr.includes(conn.nickname)){
+      console.log(onlineArr);
+      return;
+    }
+    onlineCount--;
     let mes = {};
     mes.type = "broadcast";
-    mes.data = `${conn.nickname} 已离开群聊.`
+    mes.data = `${conn.nickname} 已离开群聊,当前在线人数为${onlineCount}.`
     broadcast(JSON.stringify(mes));
   })
   conn.on("error", function (err) {
