@@ -1,27 +1,42 @@
 <template>
   <div class="container">
     <div class="chat">
-      <ul class="showMessage">
+      <ul
+        class="showMessage"
+        id="showMessage"
+      >
         <li
           v-for="item in items"
           class="news-container"
           :class="item.newsContainerClass"
         >
+          <span
+            class="nickName before"
+            v-show="item.nickName!==userName"
+          >
+            {{item.nickName}}
+          </span>
           <div
             class="news"
             :class="item.newsClass"
           >
             {{item.data}}
           </div>
+          <span
+            class="nickName after"
+            v-show="item.nickName===userName"
+          >
+            {{item.nickName}}
+          </span>
         </li>
       </ul>
       <div class="sendMessage">
         <Input
-          type="text"
+          type="textarea"
           v-model="say"
           placeholder="说点什么吧"
-          @keydown.enter.native="handleSubmit"
           class="sendMessage-input"
+          :autosize="{minRows:1,maxRows:6}"
         >
         </Input>
         <Button
@@ -74,6 +89,7 @@ export default {
         let obj = {
           newsClass: "news-mine",
           newsContainerClass: "news-container-mine",
+          nickName: name,
           data: str
         };
         this.items.push(obj);
@@ -81,10 +97,12 @@ export default {
         let obj = {
           newsClass: "news-other",
           newsContainerClass: "news-container-other",
+          nickName: name,
           data: str
         };
         this.items.push(obj);
       }
+      $("#showMessage").scrollTop($("#showMessage")[0].scrollHeight + 500);
     },
     websocketInit() {
       this.websocket.onopen = () => {
@@ -121,33 +139,37 @@ export default {
 .container {
   height: 100%;
   width: 100%;
+  min-width: 375px;
   position: absolute;
   background-color: #9be4d8;
 }
 .chat {
-  width: 500px;
-  height: 800px;
+  width: 375px;
+  height: 780px;
   background-color: coral;
   border-radius: 15px;
   margin: 60px auto 0;
   background: #d4f3ed;
   .news-container {
+    position: relative;
     display: flex;
-    padding: 10px 20px;
+    padding: 15px 0;
     font-size: 16px;
     .news {
+      margin: 0 40px;
       padding: 10px;
+      position: relative;
       display: inline-block;
-      max-width: 80%;
+      max-width: 70%;
       min-width: 15%;
       text-align: center;
       word-wrap: break-word;
       &-other {
-        border-radius: 0 10px 10px 20px;
+        border-radius: 0 20px 20px 20px;
         background-color: #ffffff;
       }
       &-mine {
-        border-radius: 15px 20px 0 20px;
+        border-radius: 20px 20px 0 20px;
         background-color: #44d7cd;
         color: #ffffff;
       }
@@ -158,6 +180,23 @@ export default {
         font-size: 12px;
         color: dimgray;
       }
+    }
+
+    .nickName {
+      font-size: 12px;
+      color: #9e9797;
+      padding: 0 10px;
+      position: absolute;
+      border:1px solid rgb(224, 224, 224);
+    }
+
+    .before {
+      color: #f0b535;
+      top: -5px;
+    }
+    .after {
+     color: #361bd1;
+      bottom: -5px;
     }
   }
   .news-container-system {
@@ -172,12 +211,9 @@ export default {
   }
 
   .showMessage {
-    overflow-x: hidden;
-    overflow-y: auto;
-    height: 720px;
-    border-radius: 45px;
+    overflow: auto;
+    height: 750px;
     padding-top: 20px;
-    // background-color: brown;
     /*滚动条样式*/
     &::-webkit-scrollbar {
       /*滚动条整体样式*/
@@ -193,6 +229,7 @@ export default {
   }
 
   .sendMessage {
+    border-top: 1px solid #9e9797;
     display: flex;
     &-input {
       flex: 1;
