@@ -4,6 +4,7 @@
       <ul
         class="showMessage"
         id="showMessage"
+        ref="showMessage"
       >
         <li
           v-for="item in items"
@@ -22,12 +23,12 @@
           >
             {{item.data}}
           </div>
-          <span
+          <!-- <span
             class="nickName after"
             v-show="item.nickName===userName"
           >
             {{item.nickName}}
-          </span>
+          </span> -->
         </li>
       </ul>
       <div class="sendMessage">
@@ -37,6 +38,7 @@
           placeholder="说点什么吧"
           class="sendMessage-input"
           :autosize="{minRows:1,maxRows:6}"
+          ref="meaasgeInput"
         >
         </Input>
         <Button
@@ -102,7 +104,13 @@ export default {
         };
         this.items.push(obj);
       }
-      $("#showMessage").scrollTop($("#showMessage")[0].scrollHeight + 500);
+      // dom渲染完成后执行
+      this.$nextTick(()=> {
+        this.$refs.showMessage.scrollTop =
+          this.$refs.showMessage.scrollHeight + 50;
+      });
+
+      this.$refs.meaasgeInput.focus();
     },
     websocketInit() {
       this.websocket.onopen = () => {
@@ -156,7 +164,7 @@ export default {
     padding: 15px 0;
     font-size: 16px;
     .news {
-      margin: 0 40px;
+      margin: 0 20px 0 40px;
       padding: 10px;
       position: relative;
       display: inline-block;
@@ -187,7 +195,6 @@ export default {
       color: #9e9797;
       padding: 0 10px;
       position: absolute;
-      border:1px solid rgb(224, 224, 224);
     }
 
     .before {
@@ -195,7 +202,7 @@ export default {
       top: -5px;
     }
     .after {
-     color: #361bd1;
+      color: #361bd1;
       bottom: -5px;
     }
   }
@@ -211,6 +218,7 @@ export default {
   }
 
   .showMessage {
+    width: 375px;
     overflow: auto;
     height: 750px;
     padding-top: 20px;

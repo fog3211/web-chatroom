@@ -222,7 +222,7 @@ let chatServer = ws.createServer(function (conn) {
       onlineArr.splice(onlineArr.indexOf(null), 1);
     }
     if(onlineArr.includes(conn.nickname)){
-      console.log(onlineArr);
+      // console.log(onlineArr);
       return;
     }
     onlineCount--;
