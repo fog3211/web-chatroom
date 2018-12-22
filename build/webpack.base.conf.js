@@ -41,7 +41,6 @@ module.exports = {
           {
             loader: 'iview-loader',
             options: {
-
               prefix: false,
               // prefix: true
               // 支持i-
@@ -71,6 +70,10 @@ module.exports = {
         }
       },
       {
+        test: /\.less$/,
+        loader: "style-loader!css-loader!less-loader",
+      },
+      {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
         loader: 'url-loader',
         options: {
@@ -78,10 +81,6 @@ module.exports = {
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
         }
       },
-      {
-        test: /\.less$/,
-        loader: "style-loader!css-loader!less-loader",
-      }
     ]
   },
   node: {
