@@ -1,6 +1,6 @@
 # vue-project
 
-> 以vue+vue-router+iview+express+MongoDB构建的在线聊天系统
+> 以vue+vue-router+iview+express+MongoDB构建的在线聊天系统(登录注册功能)
 
 ## Build Setup
 
