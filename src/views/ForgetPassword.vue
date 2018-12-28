@@ -38,6 +38,7 @@
 
 <script>
 import axios from "axios";
+import md5 from 'js-md5';
 import {
     checkUserName,
     checkPassword,
@@ -105,8 +106,12 @@ export default {
             this.$refs.forgetPasswordForm.validate(valid => {
                 if (valid) {
                     this.loading = true;
+                     let sendForm={
+                         userName: this.form.userName,
+                         password: md5(this.form.userName)
+                    };
                     axios
-                        .post("http://localhost:3000/forgetpassword", this.form)
+                        .post("http://localhost:3000/forgetpassword", sendForm)
                         .then(res => {
                             this.loading = false;
                             this.refreshIdentify();

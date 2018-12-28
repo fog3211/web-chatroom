@@ -31,6 +31,7 @@
 
 <script>
 import axios from "axios";
+import md5 from 'js-md5';
 import {
     checkUserName,
     checkPassword,
@@ -42,8 +43,8 @@ export default {
     data() {
         return {
             form: {
-                userName: "admin",
-                password: "123456"
+                userName: "",
+                password: ""
             },
             loading: false,
             rules: {
@@ -67,8 +68,12 @@ export default {
             this.$refs.loginForm.validate(valid => {
                 if (valid) {
                     this.loading = true;
+                    let sendForm={
+                         userName: this.form.userName,
+                         password: md5(this.form.userName)
+                    };
                     axios
-                        .post("http://localhost:3000/login", this.form)
+                        .post("http://localhost:3000/login", sendForm)
                         .then(res => {
                             this.loading = false;
                             // console.log(res.data);
