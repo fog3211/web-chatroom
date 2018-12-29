@@ -31,7 +31,6 @@ app.get('/', (req, res) => {
 // 登录
 app.post('/login', (req, res) => {
   let _req = req.body;
-
   MongoClient.connect(url, {
     useNewUrlParser: true
   }, function (err, db) {

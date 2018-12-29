@@ -70,7 +70,7 @@ export default {
                     this.loading = true;
                     let sendForm={
                          userName: this.form.userName,
-                         password: md5(this.form.userName)
+                         password: md5(this.form.password)
                     };
                     axios
                         .post("http://localhost:3000/login", sendForm)
