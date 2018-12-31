@@ -57,4 +57,4 @@ npm run build
 
 ## 项目开发
 
-详见我的个人博客：[来搭建一个websocket聊天室吧](https://fog3211.github.io/blog/web-chatroom.html)
+详见我的个人博客：[来做一个websocket聊天室吧](https://fog3211.github.io/blog/web-chatroom.html)
