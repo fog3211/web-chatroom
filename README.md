@@ -2,10 +2,6 @@
 
 ##   项目介绍
 
-###       在线预览
-
-​            [查看demo（请使用Chrome最新版 ）](https://chatroom.fog3211.com)
-
 ###       技术栈
 
 ------
